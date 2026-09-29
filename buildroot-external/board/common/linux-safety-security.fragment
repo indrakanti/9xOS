@@ -1,0 +1,49 @@
+# 9xOS 0.1 "Bhargav" - kernel config fragment (safety + security).
+# Merged on top of the board's base config. Option names verified against
+# Linux 6.18; Buildroot warns (does not fail) if one is unavailable.
+
+# --- Safety: fail to a defined state, never limp along -------------------
+CONFIG_WATCHDOG=y
+CONFIG_WATCHDOG_CORE=y
+# A watchdog that cannot be disarmed: if garudad dies, the board resets.
+CONFIG_WATCHDOG_NOWAYOUT=y
+# QEMU reference board watchdog (add "-device i6300esb" to QEMU).
+CONFIG_I6300ESB_WDT=y
+CONFIG_PANIC_ON_OOPS=y
+# Reboot immediately on panic.
+CONFIG_PANIC_TIMEOUT=-1
+CONFIG_SOFTLOCKUP_DETECTOR=y
+CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
+CONFIG_DETECT_HUNG_TASK=y
+CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
+CONFIG_BUG_ON_DATA_CORRUPTION=y
+CONFIG_SCHED_STACK_END_CHECK=y
+
+# --- Security: memory protections (KSPP recommendations) -----------------
+CONFIG_STRICT_KERNEL_RWX=y
+CONFIG_STRICT_MODULE_RWX=y
+CONFIG_STACKPROTECTOR=y
+CONFIG_STACKPROTECTOR_STRONG=y
+CONFIG_HARDENED_USERCOPY=y
+CONFIG_FORTIFY_SOURCE=y
+CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y
+CONFIG_INIT_STACK_ALL_ZERO=y
+CONFIG_RANDOMIZE_BASE=y
+CONFIG_SLAB_FREELIST_RANDOM=y
+CONFIG_SLAB_FREELIST_HARDENED=y
+CONFIG_SHUFFLE_PAGE_ALLOCATOR=y
+
+# --- Security: access control and attack surface -------------------------
+CONFIG_SECURITY=y
+CONFIG_SECURITY_YAMA=y
+CONFIG_SECURITY_DMESG_RESTRICT=y
+CONFIG_SECCOMP=y
+CONFIG_SECCOMP_FILTER=y
+CONFIG_AUDIT=y
+# CONFIG_DEVMEM is not set
+# CONFIG_DEVPORT is not set
+# CONFIG_KEXEC is not set
+# CONFIG_KEXEC_FILE is not set
+# CONFIG_HIBERNATION is not set
+# CONFIG_LEGACY_TIOCSTI is not set
+# CONFIG_PROC_KCORE is not set

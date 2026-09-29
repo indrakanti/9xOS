@@ -1,0 +1,9 @@
+prefix=${pcfiledir}/../..
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: garuda
+Description: 9xOS Garuda liveness monitor client library
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lgaruda_client
+Cflags: -I${includedir}

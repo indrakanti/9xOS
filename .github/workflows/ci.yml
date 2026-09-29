@@ -1,0 +1,63 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Also build the full Buildroot image (about 1 hour)"
+        type: boolean
+        default: false
+
+jobs:
+  components:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      - name: Build (warnings are errors)
+        run: cmake --build build -j
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  sanitizers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-sanitize-recover=all"
+      - run: cmake --build build -j
+      - run: ctest --test-dir build --output-on-failure
+
+  shellcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          shellcheck -s sh build.sh \
+            buildroot-external/board/common/post-build.sh \
+            buildroot-external/board/qemu-aarch64/post-image.sh \
+            buildroot-external/package/garuda/S05garudad \
+            components/garuda/tests/it_heartbeat.sh
+
+  image:
+    if: github.event_name == 'workflow_dispatch' && inputs.image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - name: Host packages
+        run: sudo apt-get update && sudo apt-get install -y bc bison flex libncurses-dev libssl-dev rsync cpio unzip file
+      - name: Build image
+        run: ./build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 9xos-bhargav-qemu-aarch64
+          path: |
+            out/9xos_bhargav_qemu_aarch64_dev/images/Image
+            out/9xos_bhargav_qemu_aarch64_dev/images/rootfs.ext4
+            out/9xos_bhargav_qemu_aarch64_dev/images/start-qemu.sh

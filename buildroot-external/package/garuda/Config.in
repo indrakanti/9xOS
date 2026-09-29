@@ -1,0 +1,27 @@
+config BR2_PACKAGE_GARUDA
+	bool "garuda"
+	help
+	  9xOS Garuda liveness monitor. garudad supervises registered
+	  applications through heartbeats and feeds the hardware
+	  watchdog only while all of them are healthy. On a missed
+	  heartbeat it stops feeding, so the board resets (safe state).
+
+	  Installs garudad, the garuda_client library, headers,
+	  CMake package (find_package(Garuda)) and pkg-config file.
+
+if BR2_PACKAGE_GARUDA
+
+config BR2_PACKAGE_GARUDA_WATCHDOG_DEVICE
+	string "hardware watchdog device"
+	default "/dev/watchdog0"
+	help
+	  Device garudad feeds. Leave empty to run without a hardware
+	  watchdog (development only: faults are logged, not acted on).
+
+config BR2_PACKAGE_GARUDA_DEMO
+	bool "install garuda_demo client"
+	help
+	  Small test client that kicks a few times and then hangs,
+	  to demonstrate fault detection on target.
+
+endif

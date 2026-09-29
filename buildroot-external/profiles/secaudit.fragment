@@ -1,0 +1,18 @@
+# 9xOS security-audit profile (opt-in, development/assessment images only).
+#
+# Brings the Kali-style assessment role to 9xOS with tools packaged by
+# Buildroot. NEVER merge this into a production or safety image: these
+# tools enlarge the attack surface and are outside the safety scope.
+#
+# Usage: ./build.sh --profile secaudit
+
+# nmap is C++
+BR2_TOOLCHAIN_BUILDROOT_CXX=y
+BR2_PACKAGE_NMAP=y
+BR2_PACKAGE_NMAP_NMAP=y
+BR2_PACKAGE_TCPDUMP=y
+BR2_PACKAGE_NFTABLES=y
+BR2_PACKAGE_AUDIT=y
+BR2_PACKAGE_LYNIS=y
+BR2_PACKAGE_STRACE=y
+BR2_PACKAGE_OPENSSH=y
