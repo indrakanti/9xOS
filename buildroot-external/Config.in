@@ -1,0 +1,3 @@
+menu "9xOS components"
+source "$BR2_EXTERNAL_NINEXOS_PATH/package/garuda/Config.in"
+endmenu
